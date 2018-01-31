@@ -1,11 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
+
+""" Collection of tests for superlists Django project.
+
+As this is the first time I've been exposed to test driven development I'll
+outline the workflow.
+1) Write a functional test when I want to add new functionality.
+    - The test should have verbose comments giving a user story ie. written from
+      how the functionality will work from a users point of view.
+    - The test should have an expected failure, as there is no production code.
+2) Think about how to write code that may pass the FAILING functional test.
+    - Write a unit test(s) to define how I want the code to behave.
+    - Each line of production code should be tested by one of the unit tests.
+3) Think about how to write code that may pass the FAILING unit test.
+    - Write the smallest amount of code to pass the unit test.
+    - Iterate between step 2 and 3 until the functional test will move beyond
+      its current failure.
+4) Rerurn the functional test and see if they either pass or get a little further.
+
+In this way the functional test is driving development I do at a high level
+while the unit tests drive the work at a low level.
+
+THUS functional tests should help you build an application with the right
+functionality and guarentee you will never break it. Unit tests should help you
+to write code thats clean and bug free.
+"""
+
 from selenium import webdriver
 
 import unittest
 
 class NewVisitorTest(unittest.TestCase):
-    """Container for user orientated test conditions. My first unittest!
+    """Container for user orientated test conditions.
+
+    The class features both outside-in functional tests and inside-out unit tests.
+    - Functional tests describe functionality from the user's point of view.
+    - Unit tests define how we want code to behave. Passing unit tests thus pass functional tests.
 
     Methods starting with test will be invoked by the test runner.
 
@@ -13,8 +43,9 @@ class NewVisitorTest(unittest.TestCase):
     afer each test.
 
     https://docs.python.org/3/library/unittest.html#unittest.TestCase
-    This class inherits from TestCase. TestCase provides some helpful methods that replace things like assert.
-    e.g. assertIn(a, b) or assertEquals(a, b) or assertLess(a, b)
+    This class inherits from TestCase. TestCase provides some helpful methods
+    that replace things like assert. e.g. assertIn(a, b) or assertEquals(a, b)
+    or assertLess(a, b)
 
     """
 
