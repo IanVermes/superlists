@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
-from django.urls import resolve  # Internal URL resolution
 from django.test import TestCase
-from django.http import HttpRequest
 
 from lists.views import home_page
 
@@ -28,18 +26,8 @@ class HomePageTest(TestCase):
     resolution take a view function I've made?
     """
 
-    def test_root_url_resolves_to_home_page_view(self):
-        "Unit test for '/' URL request. '/' should get a view func."
-        found = resolve('/')  # Resolution: maps URL to view function.
-        self.assertEqual(found.func, home_page)  # Does '/' get you the homepage func?
-
-    def test_home_page_returns_correct_html(self):
+    def test_uses_home_template(self):
         "Unit test for view resolution of '/' URL request."
-        request = HttpRequest()  # Django object made when user asks for page.
-        # Resolution is assumed... home_page is given. Other test needed (see above).
-        response = home_page(request)  # View func generetes a response.
-        html = response.content.decode('utf8')  #
-        self.assertTrue(html.startswith('<html>'))
-        self.assertIn('<title>To-Do lists</title>', html)
-        self.assertTrue(html.endswith('</html>'))
-    
+        response = self.client.get('/')  # View func generetes a response.
+        html = response.content.decode('utf8')
+        self.assertTemplateUsed(response, 'home.html')
