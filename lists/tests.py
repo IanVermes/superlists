@@ -29,5 +29,10 @@ class HomePageTest(TestCase):
     def test_uses_home_template(self):
         "Unit test for view resolution of '/' URL request."
         response = self.client.get('/')  # View func generetes a response.
-        html = response.content.decode('utf8')
+        self.assertTemplateUsed(response, 'home.html')
+
+    def test_can_save_a_POST_request(self):
+        "Unit test for view function dealing with a POST request"
+        response = self.client.post('/', data={'item_text': 'A new list item'})
+        self.assertIn('A new list item', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
