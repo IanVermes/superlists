@@ -40,7 +40,6 @@ class HomePageTest(TestCase):
         new_item = Item.objects.first()
         self.assertEqual(new_item.text, 'A new list item')
 
-
     def test_redirects_after_POST(self):
         "Unit test that checks view function redirects after POST"
         response = self.client.post('/', data={'item_text': 'A new list item'})
@@ -56,6 +55,17 @@ class HomePageTest(TestCase):
         """
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
+
+    def test_displays_all_list_items(self):
+        item1_txt, item2_txt = 'itemye1', 'itemye2'
+        Item.objects.create(text=item1_txt)
+        Item.objects.create(text=item2_txt)
+
+        response = self.client.get('/')
+
+        self.assertIn(item1_txt, response.content.decode())
+        self.assertIn(item2_txt, response.content.decode())
+
 
 
 class ItemModelTest(TestCase):
