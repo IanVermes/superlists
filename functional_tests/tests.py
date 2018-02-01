@@ -26,13 +26,14 @@ functionality and guarentee you will never break it. Unit tests should help you
 to write code thats clean and bug free.
 """
 
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 import time
-import unittest
 
-class NewVisitorTest(unittest.TestCase):
+
+class NewVisitorTest(LiveServerTestCase):
     """Container for user orientated test conditions.
 
     The class features both outside-in functional tests and inside-out unit tests.
@@ -57,7 +58,8 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def check_for_row_in_list_table(self, comparator_text):
+    def _check_for_row_in_list_table(self, comparator_text):
+        "Helper function for test_can_start_a_list_and_retrieve_it_later."
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(comparator_text, [row.text for row in rows])
@@ -70,7 +72,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # Edith has heard about a cool new online to-do app. She goes to check it out
         # its homepage.
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do lists', self.browser.title)
@@ -92,7 +94,7 @@ class NewVisitorTest(unittest.TestCase):
         # "1: Buy peacock feathers" as an item in a to-do list.
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)  # There is a better wait-for-page-load that I've seen on StackOverflow.
-        self.check_for_row_in_list_table("1: Buy peacock feathers")
+        self._check_for_row_in_list_table("1: Buy peacock feathers")
 
         # There is still a text box inviting her to add another item.
         inputbox = self.browser.find_element_by_id('id_new_item')
@@ -103,8 +105,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # The page updates again and shows both items on her list.
-        self.check_for_row_in_list_table("1: Buy peacock feathers")
-        self.check_for_row_in_list_table("2: Use peacock feathers to make a fly")
+        self._check_for_row_in_list_table("1: Buy peacock feathers")
+        self._check_for_row_in_list_table("2: Use peacock feathers to make a fly")
 
 
         # Edith wonders whether the site will remember her list. Then she sees that the
@@ -115,7 +117,3 @@ class NewVisitorTest(unittest.TestCase):
         # She visits that URL - her to-do list is still there.
 
         # Satisified she goes back to sleep.
-
-
-if __name__ == "__main__":
-    unittest.main(warnings='ignore')
