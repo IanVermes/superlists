@@ -33,10 +33,30 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, 'home.html')
 
     def test_can_save_a_POST_request(self):
-        "Unit test for view function dealing with a POST request"
+        "Unit test for view function checking POST value is added to DB."
         response = self.client.post('/', data={'item_text': 'A new list item'})
-        self.assertIn('A new list item', response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new list item')
+
+
+    def test_redirects_after_POST(self):
+        "Unit test that checks view function redirects after POST"
+        response = self.client.post('/', data={'item_text': 'A new list item'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+    def test_only_saves_items_when_necessary(self):
+        """Unit test for the view function not adding items to DB for null POST.
+
+        Tests that require a database (namely, model tests) will not use your
+        “real” (production) database. Separate, blank databases are created for
+        the tests.
+        """
+        self.client.get('/')
+        self.assertEqual(Item.objects.count(), 0)
+
 
 class ItemModelTest(TestCase):
     """Unit tests for interacting with Django ORM.
