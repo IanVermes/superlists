@@ -72,32 +72,42 @@ class ListAndItemModelTest(TestCase):
 
 class ListViewTest(TestCase):
     def test_uses_list_template(self):
-        response = self.client.get('/lists/the-only-list-in-the-world/')
+        _list = List.objects.create()
+
+        response = self.client.get(f'/lists/{_list.id}/')
+
         self.assertTemplateUsed(response, 'list.html')
 
-    def test_display_all_items(self):
-        string1, string2 = 'itemey 1', 'itemey 2'
-        _list = List.objects.create()
-        Item.objects.create(text=string1, list=_list)
-        Item.objects.create(text=string2, list=_list)
+    def test_display_only_items_for_that_list(self):
+        _list_a = List.objects.create()
+        _list_b = List.objects.create()
+        string1a, string2a = 'itemey 1', 'itemey 2'
+        string1b, string2b = 'other itemey 1', 'other itemey 2'
+        Item.objects.create(text=string1a, list=_list_a)
+        Item.objects.create(text=string2a, list=_list_a)
+        Item.objects.create(text=string1b, list=_list_b)
+        Item.objects.create(text=string2b, list=_list_b)
 
-        response = self.client.get('/lists/the-only-list-in-the-world/')
+        response = self.client.get(f'/lists/{_list_a.id}/')
 
-        self.assertContains(response, string1)
-        self.assertContains(response, string2)
+        self.assertContains(response, string1a)
+        self.assertContains(response, string2a)
+        self.assertNotContains(response, string1b)
+        self.assertNotContains(response, string2b)
 
 
 class NewListsTest(TestCase):
-        def test_can_save_a_POST_request(self):
-            "Unit test for view function checking POST value is added to DB."
-            self.client.post('/lists/new', data={'item_text': 'A new list item'})
-            self.assertEqual(Item.objects.count(), 1)
+    def test_can_save_a_POST_request(self):
+        "Unit test for view function checking POST value is added to DB."
+        self.client.post('/lists/new', data={'item_text': 'A new list item'})
+        self.assertEqual(Item.objects.count(), 1)
 
-            new_item = Item.objects.first()
+        new_item = Item.objects.first()
 
-            self.assertEqual(new_item.text, 'A new list item')
+        self.assertEqual(new_item.text, 'A new list item')
 
-        def test_redirects_after_POST(self):
-            "Unit test that checks view function redirects after POST"
-            response = self.client.post('/lists/new', data={'item_text': 'A new list item'})
-            self.assertRedirects(response, '/lists/the-only-list-in-the-world/')
+    def test_redirects_after_POST(self):
+        "Unit test that checks view function redirects after POST"
+        response = self.client.post('/lists/new', data={'item_text': 'A new list item'})
+        new_list = List.objects.first()
+        self.assertRedirects(response, f'/lists/{new_list.id}/')
