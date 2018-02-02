@@ -32,17 +32,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')  # View func generetes a response.
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_only_saves_items_when_necessary(self):
-        """Unit test for the view function not adding items to DB for null POST.
-
-        Tests that require a database (namely, model tests) will not use your
-        “real” (production) database. Separate, blank databases are created for
-        the tests.
-        """
-        self.client.get('/')
-        self.assertEqual(Item.objects.count(), 0)
-
-
 class ItemModelTest(TestCase):
     """Unit tests for interacting with Django ORM.
 
