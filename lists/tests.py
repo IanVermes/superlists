@@ -44,7 +44,7 @@ class HomePageTest(TestCase):
         "Unit test that checks view function redirects after POST"
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
 
     def test_only_saves_items_when_necessary(self):
         """Unit test for the view function not adding items to DB for null POST.
@@ -55,17 +55,6 @@ class HomePageTest(TestCase):
         """
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
-
-    def test_displays_all_list_items(self):
-        item1_txt, item2_txt = 'itemye1', 'itemye2'
-        Item.objects.create(text=item1_txt)
-        Item.objects.create(text=item2_txt)
-
-        response = self.client.get('/')
-
-        self.assertIn(item1_txt, response.content.decode())
-        self.assertIn(item2_txt, response.content.decode())
-
 
 
 class ItemModelTest(TestCase):
@@ -93,3 +82,16 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first (ever) list item.')
         self.assertEqual(second_saved_item.text, 'Item the second')
+
+
+class ListViewTest(TestCase):
+
+    def test_display_all_items(self):
+        string1, string2 = 'itemey 1', 'itemey 2'
+        Item.objects.create(text=string1)
+        Item.objects.create(text=string2)
+
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+
+        self.assertContains(response, string1)
+        self.assertContains(response, string2)
