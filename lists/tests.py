@@ -96,7 +96,7 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, string2b)
 
 
-class NewListTest(TestCase):
+class NewItemTest(TestCase):
 
     def test_can_save_a_POST_request_to_an_exisiting_list(self):
         new_item_txt = 'A new item for an existing list'
