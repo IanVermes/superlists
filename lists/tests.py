@@ -77,8 +77,9 @@ class ListViewTest(TestCase):
 
     def test_display_all_items(self):
         string1, string2 = 'itemey 1', 'itemey 2'
-        Item.objects.create(text=string1)
-        Item.objects.create(text=string2)
+        _list = List.objects.create()
+        Item.objects.create(text=string1, list=_list)
+        Item.objects.create(text=string2, list=_list)
 
         response = self.client.get('/lists/the-only-list-in-the-world/')
 
