@@ -104,7 +104,7 @@ class NewListTest(TestCase):
         correct_list = List.objects.create()
         later_list = List.objects.create()  # Dummy list to prevent head/tail indexing.
 
-        self.client.post(f'lists/{correct_list.id}/add_item',
+        self.client.post(f'/lists/{correct_list.id}/add_item',
                          data={'item_text': new_item_txt})
 
         self.assertEqual(Item.objects.count(), 1)
@@ -121,7 +121,7 @@ class NewListTest(TestCase):
         response = self.client.post(path=f'/lists/{correct_list.id}/add_item',
                                     data={'item_text': new_item_txt})
 
-        self.assertRedirects(response, f'lists/{correct_list.id}')
+        self.assertRedirects(response, f'/lists/{correct_list.id}/')
 
 class NewListsTest(TestCase):
     def test_can_save_a_POST_request(self):
