@@ -95,6 +95,15 @@ class ListViewTest(TestCase):
         self.assertNotContains(response, string1b)
         self.assertNotContains(response, string2b)
 
+    def test_passes_correct_list_to_template(self):
+        prior_list = List.objects.create()  # Dummy list to prevent head/tail indexing.
+        correct_list = List.objects.create()
+        later_list = List.objects.create()  # Dummy list to prevent head/tail indexing.
+
+        response = self.client.get(f'/lists/{correct_list.id}/')
+
+        self.assertEqual(response.context['list'], correct_list)
+
 
 class NewItemTest(TestCase):
 
